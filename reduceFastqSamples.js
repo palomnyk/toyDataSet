@@ -29,28 +29,42 @@ const keeperBarCodes = [
   'CTGGAAATCTGCA'
 ]
 
-//Create place to write new sequence files
-const output = fs.createWriteStream('renameOutput.fastq', { flags: 'a' });
-
 /**
  * Read through the file, add selected barcodes to output
  * @param {*} inputFile 
  */
 function processFile(inputFile) {
-  let instream = fs.createReadStream(inputFile),
-    outstream = new (require('stream'))(),
-    rl = readline.createInterface(instream, outstream);
+  //create generator for reading lines one at a time
+  let rl = readline.createInterface({
+    input : fs.createReadStream(inputFile),
+    output : new (require('stream'))(),
+  });
+
+  //Create place to write new sequence files
+  const output = fs.createWriteStream('rename'.concat(path.basename(inputFile)), { flags: 'a' });
+
+  let lineCount = 0;
 
   rl.on('line', function (line) {
-    if (line.startsWith('@M0') && barcodeCheck(line)) {
+    if (lineCount > 0) {
       console.log(line);
-      output.write(line)
+      output.write(line + '\n');
+      lineCount -= 1;
+    } 
+    else if (line.startsWith('@M0') && barcodeCheck(line)) {
+      console.log(line);
+      output.write(line + '\n');
+      lineCount = 3;
     }
   });
 
   rl.on('close', function (line) {
     console.log("rl.on('close': ", line);
     console.log('done reading file.');
+    // instream.end();
+    // output.end();
+    // console.log('closed files');
+    
   });
 }
 
