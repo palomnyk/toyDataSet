@@ -44,7 +44,7 @@ function processFile(inputFile) {
   rl.on('line', function (line) {
     if (line.startsWith('@M0') && barcodeCheck(line)) {
       console.log(line);
-      //output.write(line)
+      output.write(line)
     }
   });
 
@@ -58,29 +58,14 @@ function processFile(inputFile) {
  * Test if line ends in one of our selected barcodes
  * @param {*} line 
  * 
- *   for (const bc of keeperBarCodes) {
-    if (line.endsWith(bc)) {
-        return(true)
-      }else{
-        return(false)
-      }
-  }
  */
 function barcodeCheck(line) {
-  // for (let bc = 0; bc < keeperBarCodes.length; bc++) {
   for (const element of keeperBarCodes) {
-    // const element = keeperBarCodes[bc];
     if (line.endsWith(element)) {
       return true;
     }
   }
   return false;
-  // keeperBarCodes.forEach( bc => {
-  //   if (line.endsWith(bc)) {
-  //     return(true)
-  //   };
-  // })
-  // return(false)
 }
 
 
