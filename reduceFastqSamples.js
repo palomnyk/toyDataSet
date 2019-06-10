@@ -29,6 +29,8 @@ let keeperBarCodes = [
  *Some of the barcodes can only be found as the barcode
  */
 keeperBarCodes = addRevCompToList(keeperBarCodes);
+console.log(keeperBarCodes);
+
 
 /**
  * Read through the file, add selected barcodes to output
@@ -91,11 +93,13 @@ function addRevCompToList(bcArray) {
     const rc = bc.split('')
       .reverse()
       .join('')
-      .replace('A', 't')
-      .replace('T', 'a')
-      .replace('C', 'g')
-      .replace('G', 'c')
       .toUpperCase()
+      .replace(/A/g, 't')
+      .replace(/T/g, 'a')
+      .replace(/C/g, 'g')
+      .replace(/G/g, 'c')
+      .toUpperCase();
+    
     return rc;
   }
 
