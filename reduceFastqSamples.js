@@ -37,6 +37,7 @@ console.log(keeperBarCodes);
  * @param {*} inputFile 
  */
 function processFile(inputFile) {
+
   //create generator for reading lines one at a time
   let rl = readline.createInterface({
     input : fs.createReadStream(inputFile),
@@ -50,12 +51,10 @@ function processFile(inputFile) {
 
   rl.on('line', function (line) {
     if (lineCount > 0) {
-      console.log(line);
       output.write(line + '\n');
       lineCount -= 1;
     } 
     else if (line.startsWith('@M0') && barcodeCheck(line)) {
-      console.log(line);
       output.write(line + '\n');
       lineCount = 3;
     }
@@ -69,20 +68,20 @@ function processFile(inputFile) {
     // console.log('closed files');
     
   });
-}
 
-/**
+  /**
  * Test if line ends in one of our selected barcodes
  * @param {*} line 
  * 
  */
-function barcodeCheck(line) {
-  for (const element of keeperBarCodes) {
-    if (line.endsWith(element)) {
-      return true;
+  function barcodeCheck(line) {
+    for (const element of keeperBarCodes) {
+      if (line.endsWith(element)) {
+        return true;
+      }
     }
+    return false;
   }
-  return false;
 }
 
 function addRevCompToList(bcArray) {
@@ -109,5 +108,6 @@ function addRevCompToList(bcArray) {
   return bcArray.concat(emptyArr);
 }
 
+const procArgs = process.argv.slice(2);
 
-processFile(path.join('.', 'headR1.fastq'));
+processFile(procArgs[0]);
