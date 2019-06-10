@@ -3,8 +3,10 @@
  * Author: Aaron Yerke
  * Start date: June 2019
  * Notes:
+ * hpc available modules: module avail
+ * hpc load node: module load node.js/4.4.0
  * grep --color 'CGAGCTGTTACC' headR1.fastq
- * scp amyerke@hpc.uncc.edu:/users/amyerke/toydataset/gastricToy/test1/headR1.txt .
+ * scp username@hpc.uncc.edu:/users/amyerke/toydataset/gastricToy/test1/headR1.txt .
  */
 
 "use strict"
@@ -20,13 +22,13 @@ const keeperBarCodes = [
   'CTGAAGGGCGAA',
   'CGCTCACAGAAT',
   'CGAGCTGTTACC',
-  'TATGTGCCGGCT',
-  'TGGTCGCATCGT',
-  'TGTAAGACTTGG',
-  'CGGATCTAGTGT',
-  'CGATCTTCGAGC',
-  'GTCGAATTTGCG',
-  'CTGGAAATCTGCA'
+  // 'TATGTGCCGGCT',
+  // 'TGGTCGCATCGT',
+  // 'TGTAAGACTTGG',
+  // 'CGGATCTAGTGT',
+  // 'CGATCTTCGAGC',
+  // 'GTCGAATTTGCG',
+  // 'CTGGAAATCTGCA'
 ]
 
 /**
