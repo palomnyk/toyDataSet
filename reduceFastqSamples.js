@@ -5,11 +5,12 @@
  * Notes:
  * hpc available modules: module avail
  * hpc load node: module load node.js/4.4.0
- * grep --color 'CGAGCTGTTACC' headR1.fastq
+ * grep 'AGCCGGCACATA' gasBP_R1.fastq | wc
  * scp username@hpc.uncc.edu:/users/amyerke/toydataset/gastricToy/test1/headR1.txt .
  */
 
 "use strict"
+
  //import libraries
 const fs = require('fs'),
   path = require('path'),
@@ -18,18 +19,16 @@ const fs = require('fs'),
 //take 1 out of X sequences
 const rarify = 200;
 
-const keeperBarCodes = [
+let keeperBarCodes = [
   'CTGAAGGGCGAA',
   'CGCTCACAGAAT',
   'CGAGCTGTTACC',
-  // 'TATGTGCCGGCT',
-  // 'TGGTCGCATCGT',
-  // 'TGTAAGACTTGG',
-  // 'CGGATCTAGTGT',
-  // 'CGATCTTCGAGC',
-  // 'GTCGAATTTGCG',
-  // 'CTGGAAATCTGCA'
-]
+];
+
+/**
+ *Some of the barcodes can only be found as the barcode
+ */
+keeperBarCodes = addRevCompToList(keeperBarCodes);
 
 /**
  * Read through the file, add selected barcodes to output
@@ -41,7 +40,7 @@ function processFile(inputFile) {
     input : fs.createReadStream(inputFile),
     output : new (require('stream'))(),
   });
-
+  
   //Create place to write new sequence files
   const output = fs.createWriteStream('rename'.concat(path.basename(inputFile)), { flags: 'a' });
 
@@ -82,6 +81,28 @@ function barcodeCheck(line) {
     }
   }
   return false;
+}
+
+function addRevCompToList(bcArray) {
+
+  let emptyArr = [];
+  
+  function revComp(bc){
+    const rc = bc.split('')
+      .reverse()
+      .join('')
+      .replace('A', 't')
+      .replace('T', 'a')
+      .replace('C', 'g')
+      .replace('G', 'c')
+      .toUpperCase()
+    return rc;
+  }
+
+  bcArray.forEach( bc => {
+    emptyArr.push(revComp(bc))
+  })
+  return bcArray.concat(emptyArr);
 }
 
 

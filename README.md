@@ -10,3 +10,6 @@ The plan is to take three humans samples, one from each of the three experimenta
 198	CGAGCTGTTACC	AATGATACGGCGACCACCGAGATCTACACGCCTCCCTCGCGCCATCAGAGATGTG	806rcbc198	198	Human	F	15H	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	NA	MBP	15H-MBP	Human	Ctrl	MBP15	CTRL15	NA	NA	NA	10.29	7.9	337.52	9.203333333	1.975833333	9.950833333	21.115H-MBP	33625	33625	33625
 
 
+Note:
+These barcodes weren't found.  After talking to Dr. Farnaz Fouladi, she informed me that the they were identified by the reverse complement of the barcode.
+
