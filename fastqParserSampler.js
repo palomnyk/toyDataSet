@@ -29,7 +29,7 @@ const fs = require('fs'),
 const procArgs = process.argv.slice(2),
   READ1 = procArgs[0],
   READ2 = procArgs[1],
-  rarify = procArgs[1]; //take 1 out of X sequences
+  rarify = procArgs[2]; //take 1 out of X sequences
 
 //for counting barcodes in a multiplexed dataset
 let barcodeCount = {};
@@ -74,12 +74,9 @@ function processFile(fastqR1, fastqR2) {
     // barcode : null,
     returnFastq : function() {
       try {
-        console.log(this.header + '\n' + this.seq + '\n+\n' + this.score);
-        
-        return this.header + '\n' + this.seq + '\n+\n' + this.score;
+        return this.header + '\n' + this.seq + '\n+\n' + this.score + '\n';
       } catch (err) {
         console.error(err);
-        
       }
     },
     checkSeqComplete : function(){
@@ -118,15 +115,26 @@ function processFile(fastqR1, fastqR2) {
         /**
          * Action happens here! At this point, we should have a full fastqSeq
          */
-        console.log(seqCounter, ' ', rarify);
+        //console.log(seqCounter, ' ', rarify);
 
          if (seqCounter % rarify === 0) {
-          let fq = fastqSeq.returnFastq();
-          console.log(fq);
-          outputR1.write(fq);
+          let fq1 = fastqSeq.returnFastq();
+          //console.log(fq1);
+          outputR1.write(fq1);
 
-
-
+          let grp = execSync(`grep '${fastqSeq.header}' -A 3 ${fastqR2}`, {
+            shell: '/bin/bash',
+            detached: false,
+          });
+          outputR2.write(grp);
+          // grp.stdout.on('data', function (data) {
+          //   console.log('stdout: ' + data.toString());
+          //   //outputR2.write(data);
+          // });
+          // grp.sterr.on('error', function (data) {
+          //   console.log('stderr: ' + data.toString());
+          // });
+    
          }
 
         //console.log('checkSeqStartWithPrimers', fastqSeq.checkSeqStartWithPrimers());
