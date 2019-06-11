@@ -3,7 +3,7 @@
  * Author: Aaron Yerke
  * Start date: June 2019
  * Notes:
- * First input is fastq path, second is rarifier path.
+ * First input is fastq R1 path, second is fastq R1 path, third is rarifier path.
  * 
  * 
  * hpc available modules: module avail
@@ -14,16 +14,22 @@
 
 "use strict"
 
-//CLI Arguments
-const procArgs = process.argv.slice(2);
+if (process.argv.length != 5) {
+  console.error("ERROR: Enter the proper number arguments.");
+  process.exit(1);
+}
 
- //import libraries
+//import libraries
 const fs = require('fs'),
   path = require('path'),
-  readline = require('readline');
+  readline = require('readline'),
+  execSync = require('child_process').execSync;
 
-//take 1 out of X sequences
-const rarify = procArgs[1];
+//CLI Arguments
+const procArgs = process.argv.slice(2),
+  READ1 = procArgs[0],
+  READ2 = procArgs[1],
+  rarify = procArgs[1]; //take 1 out of X sequences
 
 //for counting barcodes in a multiplexed dataset
 let barcodeCount = {};
@@ -42,19 +48,21 @@ let seqCounter = 0;
 keeperBarCodes = addRevCompToList(keeperBarCodes);
 
 /**
- * Read through the file, add selected barcodes to output
- * @param {*} inputFile 
+ * Read through the fastqR1, get the selected sequences, print them to R1 output,
+ * grep matching IDs in fastqR2, write them to R2 output
+ * @param {*} fastqR1 
  */
-function processFile(inputFile) {
+function processFile(fastqR1, fastqR2) {
 
   //create generator for reading lines one at a time
   let rl = readline.createInterface({
-    input : fs.createReadStream(inputFile),
+    input : fs.createReadStream(fastqR1),
     output : new (require('stream'))(),
   });
   
   //Create place to write new sequence files
-  const output = fs.createWriteStream('rename' + (path.basename(inputFile)), { flags: 'a' });
+  const outputR1 = fs.createWriteStream('rename' + (path.basename(fastqR1)), { flags: 'a' });
+  const outputR2 = fs.createWriteStream('rename' + (path.basename(fastqR2)), { flags: 'a' });
 
   let lineCount = 0;
 
@@ -115,7 +123,10 @@ function processFile(inputFile) {
          if (seqCounter % rarify === 0) {
           let fq = fastqSeq.returnFastq();
           console.log(fq);
-          output.write(fq);
+          outputR1.write(fq);
+
+
+
          }
 
         //console.log('checkSeqStartWithPrimers', fastqSeq.checkSeqStartWithPrimers());
@@ -178,4 +189,4 @@ function isMultiple(baseMultiple, tester) {
   return baseMultiple % test === 0;
 }
 
-processFile(procArgs[0]);
+processFile(READ1,READ2);
