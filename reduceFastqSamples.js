@@ -3,13 +3,19 @@
  * Author: Aaron Yerke
  * Start date: June 2019
  * Notes:
+ * First input is fastq path, second is rarifier path.
+ * 
+ * 
  * hpc available modules: module avail
  * hpc load node: module load node.js/4.4.0
  * grep 'AGCCGGCACATA' gasBP_R1.fastq | wc
- * scp username@hpc.uncc.edu:/users/amyerke/toydataset/gastricToy/test1/headR1.txt .
+ * scp amyerke@hpc.uncc.edu:/users/amyerke/toydataset/gastricToy/test1/toyDataSet/renamegasBP_R1.fastq ./resultGasBP_R1.fastq
  */
 
 "use strict"
+
+//CLI Arguments
+const procArgs = process.argv.slice(2);
 
  //import libraries
 const fs = require('fs'),
@@ -17,20 +23,23 @@ const fs = require('fs'),
   readline = require('readline');
 
 //take 1 out of X sequences
-const rarify = 200;
+const rarify = procArgs[1];
 
+//for counting barcodes in a multiplexed dataset
+let barcodeCount = {};
+
+//the barcodes that we want to keep
 let keeperBarCodes = [
   'CTGAAGGGCGAA',
   'CGCTCACAGAAT',
   'CGAGCTGTTACC',
 ];
 
-/**
- *Some of the barcodes can only be found as the barcode
- */
-keeperBarCodes = addRevCompToList(keeperBarCodes);
-console.log(keeperBarCodes);
+//how many seqs have been parsed so far
+let seqCounter = 0;
 
+//Some of the barcodes can only be found as the barcode
+keeperBarCodes = addRevCompToList(keeperBarCodes);
 
 /**
  * Read through the file, add selected barcodes to output
@@ -45,19 +54,77 @@ function processFile(inputFile) {
   });
   
   //Create place to write new sequence files
-  const output = fs.createWriteStream('rename'.concat(path.basename(inputFile)), { flags: 'a' });
+  const output = fs.createWriteStream('rename' + (path.basename(inputFile)), { flags: 'a' });
 
   let lineCount = 0;
 
-  rl.on('line', function (line) {
-    if (lineCount > 0) {
-      output.write(line + '\n');
-      lineCount -= 1;
-    } 
-    else if (line.startsWith('@M0') && barcodeCheck(line)) {
-      output.write(line + '\n');
-      lineCount = 3;
+  //empty fastq object
+  let fastqSeq = {
+    // header : null,
+    // seq : null,
+    // score : null,
+    // barcode : null,
+    returnFastq : function() {
+      try {
+        console.log(this.header + '\n' + this.seq + '\n+\n' + this.score);
+        
+        return this.header + '\n' + this.seq + '\n+\n' + this.score;
+      } catch (err) {
+        console.error(err);
+        
+      }
+    },
+    checkSeqComplete : function(){
+      if (this.header != null && this.seq != null && this.score != null) {
+        return true;
+      } else {
+        return false;
+      }
+    },
+    checkSeqStartWithPrimers : function(){
+      /**
+       * Need sequences that only start with:
+       * ^TTACCGCGGC[GT]GCTGGCACTC
+       * ^ATTAGA[AT]ACCC[TCG][TAG]GTAGTCCGT
+       */
+      const primerStartSeqs = [
+        /^TTACCGCGGC[GT]GCTGGCACTC/,
+        /^ATTAGA[AT]ACCC[TCG][TAG]GTAGTCCGT/
+      ];
+      return primerStartSeqs.some(primer => this.seq.match(primer));
     }
+  };
+
+  rl.on('line', function (line) {
+    if (line.startsWith('@M0')) {
+      fastqSeq.header = line;
+      fastqSeq.barcode = line.split('N:0:')[1];
+      lineCount = 4;
+    }else{
+      if (lineCount === 3) {
+        fastqSeq.seq = line;
+      }
+      if (lineCount === 1) {
+        fastqSeq.score = line;
+        seqCounter += 1;
+        /**
+         * Action happens here! At this point, we should have a full fastqSeq
+         */
+        console.log(seqCounter, ' ', rarify);
+
+         if (seqCounter % rarify === 0) {
+          let fq = fastqSeq.returnFastq();
+          console.log(fq);
+          output.write(fq);
+         }
+
+        //console.log('checkSeqStartWithPrimers', fastqSeq.checkSeqStartWithPrimers());
+        //console.log('fastqSeq.checkSeqComplete() ', fastqSeq.checkSeqComplete());
+        //console.log('fastqSeq.barcode',fastqSeq.barcode);
+        //console.log('fastqSeq.returnFastq() ', fastqSeq.returnFastq());
+      }
+    }
+    lineCount -= 1;
   });
 
   rl.on('close', function (line) {
@@ -66,14 +133,12 @@ function processFile(inputFile) {
     // instream.end();
     // output.end();
     // console.log('closed files');
-    
   });
 
   /**
- * Test if line ends in one of our selected barcodes
- * @param {*} line 
- * 
- */
+   * Test if line ends in one of our selected barcodes
+   * @param {*} line 
+   */
   function barcodeCheck(line) {
     for (const element of keeperBarCodes) {
       if (line.endsWith(element)) {
@@ -82,7 +147,8 @@ function processFile(inputFile) {
     }
     return false;
   }
-}
+
+}//end processFile
 
 function addRevCompToList(bcArray) {
 
@@ -106,8 +172,10 @@ function addRevCompToList(bcArray) {
     emptyArr.push(revComp(bc))
   })
   return bcArray.concat(emptyArr);
-}
+}//end addRevCompToList
 
-const procArgs = process.argv.slice(2);
+function isMultiple(baseMultiple, tester) {
+  return baseMultiple % test === 0;
+}
 
 processFile(procArgs[0]);
