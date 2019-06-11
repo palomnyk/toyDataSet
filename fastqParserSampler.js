@@ -43,6 +43,7 @@ let keeperBarCodes = [
 
 //how many seqs have been parsed so far
 let seqCounter = 0;
+let totalLineCount = 0;
 
 //Some of the barcodes can only be found as the barcode
 keeperBarCodes = addRevCompToList(keeperBarCodes);
@@ -51,8 +52,10 @@ keeperBarCodes = addRevCompToList(keeperBarCodes);
  * Read through the fastqR1, get the selected sequences, print them to R1 output,
  * grep matching IDs in fastqR2, write them to R2 output
  * @param {*} fastqR1 
+ * 
+ * @param {*} fastqR2
  */
-function processFile(fastqR1, fastqR2) {
+function createSubsamples(fastqR1, fastqR2) {
 
   //create generator for reading lines one at a time
   let rl = readline.createInterface({
@@ -61,17 +64,17 @@ function processFile(fastqR1, fastqR2) {
   });
   
   //Create place to write new sequence files
-  const outputR1 = fs.createWriteStream('rename' + (path.basename(fastqR1)), { flags: 'a' });
-  const outputR2 = fs.createWriteStream('rename' + (path.basename(fastqR2)), { flags: 'a' });
+  const outputR1 = fs.createWriteStream(`reduced${rarify}${path.basename(fastqR1)}`, { flags: 'a' });
+  const outputR2 = fs.createWriteStream(`reduced${rarify}${path.basename(fastqR2)}`, { flags: 'a' });
 
   let lineCount = 0;
 
   //empty fastq object
   let fastqSeq = {
-    // header : null,
-    // seq : null,
-    // score : null,
-    // barcode : null,
+    header : null,
+    seq : null,
+    score : null,
+    barcode : null,
     returnFastq : function() {
       try {
         return this.header + '\n' + this.seq + '\n+\n' + this.score + '\n';
@@ -115,7 +118,6 @@ function processFile(fastqR1, fastqR2) {
         /**
          * Action happens here! At this point, we should have a full fastqSeq
          */
-        //console.log(seqCounter, ' ', rarify);
 
          if (seqCounter % rarify === 0) {
           let fq1 = fastqSeq.returnFastq();
@@ -127,45 +129,17 @@ function processFile(fastqR1, fastqR2) {
             detached: false,
           });
           outputR2.write(grp);
-          // grp.stdout.on('data', function (data) {
-          //   console.log('stdout: ' + data.toString());
-          //   //outputR2.write(data);
-          // });
-          // grp.sterr.on('error', function (data) {
-          //   console.log('stderr: ' + data.toString());
-          // });
-    
          }
-
-        //console.log('checkSeqStartWithPrimers', fastqSeq.checkSeqStartWithPrimers());
-        //console.log('fastqSeq.checkSeqComplete() ', fastqSeq.checkSeqComplete());
-        //console.log('fastqSeq.barcode',fastqSeq.barcode);
-        //console.log('fastqSeq.returnFastq() ', fastqSeq.returnFastq());
       }
     }
     lineCount -= 1;
+    totalLineCount += 1;
   });
 
-  rl.on('close', function (line) {
-    console.log("rl.on('close': ", line);
-    console.log('done reading file.');
-    // instream.end();
-    // output.end();
-    // console.log('closed files');
+  rl.on('close', function () {
+    console.log('Done reading files.');
+    console.log(`R1.fastq had ${seqCounter} sequences and ${totalLineCount} lines`);
   });
-
-  /**
-   * Test if line ends in one of our selected barcodes
-   * @param {*} line 
-   */
-  function barcodeCheck(line) {
-    for (const element of keeperBarCodes) {
-      if (line.endsWith(element)) {
-        return true;
-      }
-    }
-    return false;
-  }
 
 }//end processFile
 
@@ -197,4 +171,18 @@ function isMultiple(baseMultiple, tester) {
   return baseMultiple % test === 0;
 }
 
-processFile(READ1,READ2);
+
+/**
+ * Test if line ends in one of our selected barcodes
+ * @param {*} line 
+ */
+function barcodeCheck(line) {
+  for (const element of keeperBarCodes) {
+    if (line.endsWith(element)) {
+      return true;
+    }
+  }
+  return false;
+}
+
+createSubsamples(READ1,READ2);
