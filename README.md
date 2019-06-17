@@ -1,7 +1,11 @@
 # toyDataSet
-scripts and files related to building and running a toy dataset for testing BioLockJ
+scripts and files related to building and running toy datasets for testing BioLockJ
+
+China Urban Rural Dataset
 
 
+
+GASTRIC BYPASS DATASET:
 The plan is to take three humans samples, one from each of the three experimental groups: GWL, PWL, and NSC.
 
 #SampleID	BarcodeSequence	LinkerPrimerSequence	Barcode	Barcode_ID	Species	Sex	Mouse_human_ID	Weightgain_time3	Baseline_weight	Weightgain_week1	weightgain_week2	weightgain_week3	weightgain_week4	Weightgain_time4	Weight_prior_WD	Mouse_GLP1_baseline	Mouse_GLP1_1week	Mouse_GLP1_4week	Timepoint_code	ID_code	Time_Point	Group	Donor	Group_Donor	Diet_post_WD_phase	Cohort	Date_of_fecal_collection	Human_GLP1	Human_GLP2	Human_PYY	Human_CA	Human_DCA	Human_CDCA	Human_TB	Description	Num_Reads	Num_Trimmed_Reads	Num_Valid_Reads
