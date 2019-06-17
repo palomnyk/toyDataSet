@@ -9,6 +9,8 @@ FQLIST=../testingData/fastqList.txt
 # Text processing first
 EXPGROUPS=$( < grep _1.fq.gz $FQLIST | sed 's/_1.fq.gz//' )
 echo $EXPGROUPS
+
+NUM=< wc -l $EXPGROUPS
 echo "Table $META has $NUM rows including the hearder."
 
 echo "First row:"

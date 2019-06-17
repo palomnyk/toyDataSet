@@ -1,0 +1,27 @@
+#!/bin/bash
+#PBS -l walltime=02:30:00
+#PBS -l nodes=1:ppn=8
+#PBS -l mem=8000mb
+#PBS -j oe
+#PBS -q copperhead
+
+cd $PBS_O_WORKDIR
+
+module load node.js/4.4.0
+
+echo unzipping ${SRR} files
+gunzip ${SRR}*
+
+echo "got SRR ${SRR}"
+
+echo "running 500"
+node fastqParserSampler.js ${SRR}"_1.fastq" ${SRR}"_2.fastq" 500
+
+echo "running 1000"
+node fastqParserSampler.js ${SRR}"_1.fastq" ${SRR}"_2.fastq" 1000
+
+echo "running 2000"
+node fastqParserSampler.js ${SRR}"_1.fastq" ${SRR}"_2.fastq" 2000
+
+echo " ... gzip ... "
+gzip ${SRR}*
