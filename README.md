@@ -2,8 +2,7 @@
 scripts and files related to building and running toy datasets for testing BioLockJ
 
 China Urban Rural Dataset
-
-
+Download.sh -downloads files from SRA
 
 GASTRIC BYPASS DATASET:
 The plan is to take three humans samples, one from each of the three experimental groups: GWL, PWL, and NSC.
