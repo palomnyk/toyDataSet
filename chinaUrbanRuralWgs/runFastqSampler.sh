@@ -1,6 +1,6 @@
 #!/bin/bash
 
-meta=./metadata/meta_soil_blj.txt
+meta=./metadata/PRJNA349463.tsv
 col=6
 num=$( < $meta wc -l)
 echo "Table $meta has $num rows including the header."
