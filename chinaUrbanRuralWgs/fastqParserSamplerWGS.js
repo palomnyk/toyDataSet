@@ -12,9 +12,8 @@
 
 "use strict"
 
-if (process.argv.length != 5) {
-  console.error("ERROR: Enter the proper number arguments.");
-  process.exit(1);
+if (process.argv.length != 4) {
+  throw "ERROR: Enter the proper number arguments.";
 }
 
 //import libraries
@@ -26,8 +25,7 @@ const fs = require('fs'),
 //CLI Arguments
 const procArgs = process.argv.slice(2),
   READ1 = procArgs[0],
-  READ2 = procArgs[1],
-  rarify = procArgs[2]; //take 1 out of X sequences
+  rarify = procArgs[1]; //take 1 out of X sequences
 
 //how many seqs have been parsed so far
 let seqCounter = 0;
@@ -37,10 +35,8 @@ let totalLineCount = 0;
  * Read through the fastqR1, get the selected sequences, print them to R1 output,
  * grep matching IDs in fastqR2, write them to R2 output
  * @param {*} fastqR1 
- * 
- * @param {*} fastqR2
  */
-function createSubsamples(fastqR1, fastqR2) {
+function createSubsamples(fastqR1) {
 
   //create generator for reading lines one at a time
   let rl = readline.createInterface({
@@ -58,7 +54,6 @@ function createSubsamples(fastqR1, fastqR2) {
     fs.mkdirSync(sampleDir);
   }
   const outputR1 = fs.createWriteStream(path.join(sampleDir,`reduced${rarify}${path.basename(fastqR1)}`), { flags: 'a' });
-  const outputR2 = fs.createWriteStream(path.join(sampleDir,`reduced${rarify}${path.basename(fastqR2)}`), { flags: 'a' });
   let lineCount = 0;
 
   //empty fastq object
@@ -85,18 +80,20 @@ function createSubsamples(fastqR1, fastqR2) {
   };
 
   rl.on('line', function (line) {
-    if (line.startsWith('@SRR')) {
+    if (lineCount = 0) {
+      if (!line.startsWith('@')) {
+        throw "this fastq doesn't start with '@'. Cannot proceed.";
+      }
       fastqSeq.header = line;
-      fastqSeq.barcode = line.split('N:0:')[1];
-      lineCount = 4;
+      //fastqSeq.barcode = line.split('N:0:')[1];
     }else{
-      if (lineCount === 3) {
+      if (lineCount === 1) {
         fastqSeq.seq = line;
       }
       if (lineCount === 2) {
         fastqSeq.optLine = line;
       }
-      if (lineCount === 1) {
+      if (lineCount === 3) {
         fastqSeq.score = line;
         seqCounter += 1;
         /**
@@ -107,22 +104,12 @@ function createSubsamples(fastqR1, fastqR2) {
           let fq1 = fastqSeq.returnFastq();
           //console.log(fq1);
           outputR1.write(fq1);
-
-          try {
-            let grp = execSync(`grep '${fastqSeq.header.split(' length')[0]}' -A 3 ${fastqR2}`, {
-              shell: '/bin/bash',
-              detached: false,
-            });
-            outputR2.write(grp);
-          } catch (error) {
-            console.error(error);
-          }
-
-
+          seqCounter += 1;
          }
+        lineCount = -1;
       }
     }
-    lineCount -= 1;
+    lineCount += 1;
     totalLineCount += 1;
   });
 
@@ -133,5 +120,4 @@ function createSubsamples(fastqR1, fastqR2) {
 
 }//end processFile
 
-
-createSubsamples(READ1,READ2);
+createSubsamples(READ1);
