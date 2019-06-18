@@ -85,7 +85,7 @@ function createSubsamples(fastqR1, fastqR2) {
   };
 
   rl.on('line', function (line) {
-    if (line.startsWith('@ER')) {
+    if (line.startsWith('@SRR')) {
       fastqSeq.header = line;
       fastqSeq.barcode = line.split('N:0:')[1];
       lineCount = 4;
