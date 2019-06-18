@@ -18,7 +18,7 @@ do
     then
         SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
         export SRR
-        qsub -v SRR -q copperhead runFastqParserSampler.pbs
+        qsub -v SRR -q copperhead runFastqSampler.pbs
         echo "launched $SRR."
     fi
 done
