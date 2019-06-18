@@ -58,7 +58,7 @@ function createSubsamples(fastqR1, fastqR2) {
     fs.mkdirSync(sampleDir);
   }
   const outputR1 = fs.createWriteStream(path.join(sampleDir,`reduced${rarify}${path.basename(fastqR1)}`), { flags: 'a' });
-  const outputR1 = fs.createWriteStream(path.join(sampleDir,`reduced${rarify}${path.basename(fastqR2)}`), { flags: 'a' });
+  const outputR2 = fs.createWriteStream(path.join(sampleDir,`reduced${rarify}${path.basename(fastqR2)}`), { flags: 'a' });
   let lineCount = 0;
 
   //empty fastq object
