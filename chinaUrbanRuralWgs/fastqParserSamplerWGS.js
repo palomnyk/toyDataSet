@@ -80,7 +80,8 @@ function createSubsamples(fastqR1) {
   };
 
   rl.on('line', function (line) {
-    if (lineCount = 0) {
+    
+    if (lineCount === 0) {
       if (!line.startsWith('@')) {
         throw "this fastq doesn't start with '@'. Cannot proceed.";
       }
@@ -99,12 +100,10 @@ function createSubsamples(fastqR1) {
         /**
          * Action happens here! At this point, we should have a full fastqSeq
          */
-
          if (seqCounter % rarify === 0) {
           let fq1 = fastqSeq.returnFastq();
-          //console.log(fq1);
+          // console.log(fq1);
           outputR1.write(fq1);
-          seqCounter += 1;
          }
         lineCount = -1;
       }
