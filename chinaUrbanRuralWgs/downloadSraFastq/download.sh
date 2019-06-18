@@ -3,7 +3,7 @@
 module load sra-tools  
 mkdir logs; download.sh &> logs/download.log
 
-meta=../PRJNA349463.tsv
+meta=../metadata/PRJNA349463.tsv
 col=6
 
 num=$( < $meta wc -l)
@@ -21,7 +21,6 @@ do
     echo "Getting ${srr}..."
     if [ "$srr" != "NA" ];
     then
-        echo exporting "$srr"
         fasterq-dump $srr
         echo " ... gzip ... "
         gzip ${srr}*
