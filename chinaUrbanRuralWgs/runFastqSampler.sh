@@ -14,8 +14,9 @@ for i in $(seq 2 $num)
 do
     echo "$i of $num"
     echo "$SRR"
-    if [ "$SRR" != "NA" ] 
+    if [ "${SRR}" != "NA" ] 
     then
+        echo in thin
         SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
         export SRR
         qsub -v SRR -q copperhead runFastqSampler.pbs
