@@ -14,10 +14,10 @@ for i in $(seq 2 $num)
 do
     echo "$i of $num"
     if [ "$SRR" != "NA" ];
-    SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
-    export SRR
-    qsub -v SRR -q copperhead runFastqParserSampler.pbs
-    echo "launched $SRR."
+        SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
+        export SRR
+        qsub -v SRR -q copperhead runFastqParserSampler.pbs
+        echo "launched $SRR."
     fi
 done
 
