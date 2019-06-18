@@ -13,7 +13,9 @@ head -n 2 $meta
 for i in $(seq 2 $num)
 do
     echo "$i of $num"
-    if [ "$SRR" != "NA" ];
+    echo "$SRR"
+    if [ "$SRR" != "NA" ] 
+    then
         SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
         export SRR
         qsub -v SRR -q copperhead runFastqParserSampler.pbs
