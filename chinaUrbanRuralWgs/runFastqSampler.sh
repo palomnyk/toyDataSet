@@ -13,11 +13,11 @@ head -n 2 $meta
 for i in $(seq 2 $num)
 do
     echo "$i of $num"
+    SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
     echo "$SRR"
-    if [[ "${SRR}" != "NA" ]] 
+    if [ "${SRR}" != "NA" ]
     then
         echo "in if then"
-        SRR=$(sed -ne "${i}p" ${meta} | cut -f ${col})
         export SRR
         qsub -v SRR -q copperhead runFastqSampler.pbs
         echo "launched $SRR."
