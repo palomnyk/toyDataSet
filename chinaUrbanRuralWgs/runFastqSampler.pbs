@@ -10,7 +10,7 @@ cd $PBS_O_WORKDIR
 module load node.js/4.4.0
 
 echo unzipping ${SRR} files
-gunzip "./downloadSraFastq/"${SRR}*
+gunzip "./downloadSraFastq/SRR*"
 
 echo "got SRR ${SRR}"
 
