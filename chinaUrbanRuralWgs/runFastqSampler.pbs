@@ -36,7 +36,10 @@ echo "running 50000"
 node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 50000
 
 echo "running 100000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 50000
+node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 100000
+
+echo "running 150000"
+node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 150000
 
 echo " ... gzip ... "
 #gzip ${SRR}*
