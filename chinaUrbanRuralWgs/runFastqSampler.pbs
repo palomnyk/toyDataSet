@@ -14,32 +14,38 @@ gunzip "./downloadSraFastq/SRR*"
 
 echo "got SRR ${SRR}"
 
-echo "running 100"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 100
+# echo "running 100"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 100
 
-echo "running 500"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 500
+# echo "running 500"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 500
 
-echo "running 1000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 1000
+# echo "running 1000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 1000
 
-echo "running 2000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 2000
+# echo "running 2000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 2000
 
-echo "running 5000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 5000
+# echo "running 5000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 5000
 
-echo "running 10000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 10000
+# echo "running 10000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 10000
 
-echo "running 50000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 50000
+# echo "running 50000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 50000
 
-echo "running 100000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 100000
+# echo "running 100000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 100000
 
-echo "running 150000"
-node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 150000
+# echo "running 150000"
+# node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 150000
+
+echo "running 1000000"
+node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 1000000
+
+echo "running 1500000"
+node fastqParserSamplerWGS.js "./downloadSraFastq/"${SRR}".fastq" 10000000
 
 echo " ... gzip ... "
 #gzip ${SRR}*
